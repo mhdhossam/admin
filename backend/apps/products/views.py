@@ -1,3 +1,5 @@
+from django.http import request, response
+
 from core.viewsets import AdminModelViewSet
 from .models import Product, Category
 from .serializers import ProductSerializer, ProductListSerializer, CategorySerializer
@@ -21,6 +23,13 @@ class ProductViewSet(AdminModelViewSet):
         if status_filter:
             qs = qs.filter(status=status_filter)
         return qs
+    
+    def update(self, request, *args, **kwargs):
+        print("Request data:", request.data)
+        response = super().update(request, *args, **kwargs)
+        if response.status_code == 400:
+            print("Validation errors:", response.data)   # ← this one specifically
+        return response
 
 
 class CategoryViewSet(AdminModelViewSet):

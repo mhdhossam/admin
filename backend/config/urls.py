@@ -1,9 +1,10 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework_simplejwt.views import TokenRefreshView
 from apps.users.views import AdminTokenObtainPairView, AdminTokenVerifyView, AdminLogoutView
+from core.views import admin_index
 
 urlpatterns = [
     path("django-admin/", admin.site.urls),
@@ -13,7 +14,7 @@ urlpatterns = [
     path("api/auth/refresh/", TokenRefreshView.as_view(),          name="token_refresh"),
     path("api/auth/verify/",  AdminTokenVerifyView.as_view(),      name="token_verify"),
     path("api/auth/logout/",  AdminLogoutView.as_view(),           name="token_logout"),
-
+    re_path(r'^admin/.*$', admin_index, name='admin_index'),
     # Resource APIs
     path("api/", include("apps.products.urls")),
     path("api/", include("apps.users.urls")),

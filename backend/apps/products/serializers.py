@@ -31,9 +31,10 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class ProductListSerializer(serializers.ModelSerializer):
-    """Lightweight serializer for list views — avoids N+1 on category."""
+    """Lightweight serializer for list views."""
     category_name = serializers.CharField(source="category.name", read_only=True, default=None)
 
     class Meta:
         model = Product
-        fields = ["id", "name", "price", "stock", "status", "category_name", "created_at"]
+        fields = ["id", "name", "price", "stock", "status", "description","category", "category_name", "created_at"]
+        read_only_fields = ["category_name"]

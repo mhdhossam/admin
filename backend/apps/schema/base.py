@@ -123,7 +123,13 @@ def django_field_to_schema(f: django_fields.Field) -> SchemaField:
         kwargs["related_model"] = related.__name__ if related else None
         # Endpoint derived by convention: lowercase model name + "s"
         if related:
-            kwargs["related_endpoint"] = f"/api/{related.__name__.lower()}s/"
+            # Use Django's built-in pluralization
+            plural = related._meta.verbose_name_plural
+            if not plural:
+            # Fallback to simple plural (should not happen for most models)
+                plural = f"{related.__name__.lower()}s"
+        kwargs["related_endpoint"] = f"/api/{plural.lower()}/"
+            
 
     # Auto fields are always read-only
     if isinstance(f, (django_fields.AutoField, django_fields.BigAutoField)):

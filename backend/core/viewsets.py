@@ -28,7 +28,17 @@ class AdminModelViewSet(viewsets.ModelViewSet):
     search_fields: list[str] = []
     ordering_fields: list[str] = ["id"]
     ordering = ["-id"]
+class AdminModelViewSet(viewsets.ModelViewSet):
+    # ... existing code ...
 
+    def update(self, request, *args, **kwargs):
+        logger.info(f"PATCH data: {request.data}")  # you already have this
+
+        response = super().update(request, *args, **kwargs)
+        if response.status_code == status.HTTP_400_BAD_REQUEST:
+            logger.error(f"Validation errors: {response.data}")  # <-- add this
+        return response
+    
     def perform_create(self, serializer):
         instance = serializer.save()
         logger.info(

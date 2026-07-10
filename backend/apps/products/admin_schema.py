@@ -11,7 +11,7 @@ from .models import Product, Category
 class ProductSchema(AdminSchema):
     model = Product
     endpoint = "/api/products/"
-    list_display = ["id", "name", "price", "stock", "status", "created_at"]
+    list_display = ["id", "name", "price", "stock", "status","category", "created_at"]
     search_fields = ["name", "description"]
     ordering = ["-created_at"]
     # Auto-introspect fields (no manual fields list needed)
