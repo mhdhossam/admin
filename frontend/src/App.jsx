@@ -165,7 +165,15 @@ function useRoute() {
   return path;
 }
 function navigate(to) {
-  window.history.pushState({}, "", to);
+  let target = to;
+  if (!target.startsWith("/admin")) {
+    if (target === "/") {
+      target = "/admin/";
+    } else {
+      target = "/admin" + target;
+    }
+  }
+  window.history.pushState({}, "", target);
   window.dispatchEvent(new PopStateEvent("popstate"));
 }
 
@@ -177,7 +185,7 @@ const Icon = {
   edit:    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} width={14} height={14}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
   trash:   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} width={14} height={14}><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>,
   logout:  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} width={16} height={16}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>,
-  db:      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} width={18} height={18}><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>,
+  db:      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} width={20} height={20}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM12 8v8M8 12h8"/></svg>,
   check:   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} width={14} height={14}><polyline points="20 6 9 17 4 12"/></svg>,
   x:       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} width={14} height={14}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
   spinner: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} width={20} height={20} style={{animation:"spin 0.8s linear infinite"}}><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>,
@@ -203,11 +211,11 @@ function LoginPage() {
   return (
     <div style={S.loginWrap}>
       <div style={S.loginCard}>
-        <div style={S.loginLogo}>
-          <span style={S.logoIcon}>{Icon.db}</span>
-          <span style={S.logoText}>NEXUS ADMIN</span>
+        <div style={{ ...S.loginLogo, alignItems: "center" }}>
+          <img src="/logo/logo1.jpg" style={{ width: 42, height: 42, borderRadius: "50%", objectFit: "cover" }} alt="Premier Health" />
+          <span style={S.logoText}>PREMIERCARE</span>
         </div>
-        <p style={S.loginSub}>Headless Django Admin Panel</p>
+        <p style={S.loginSub}>Luxury Concierge Management Console</p>
         <form onSubmit={submit} style={{ display:"flex", flexDirection:"column", gap:12 }}>
           <label style={S.label}>Username</label>
           <input style={S.input} type="text" autoFocus placeholder="admin" value={form.username}
@@ -233,9 +241,9 @@ function Sidebar({ schemas, currentModel }) {
   const path = useRoute();
   return (
     <aside style={S.sidebar}>
-      <div style={S.sidebarHeader}>
-        <span style={S.sidebarLogoIcon}>{Icon.db}</span>
-        <span style={S.sidebarLogoText}>NEXUS</span>
+      <div style={{ ...S.sidebarHeader, alignItems: "center", gap: 10 }}>
+        <img src="/logo/logo1.jpg" style={{ width: 30, height: 30, borderRadius: "50%", objectFit: "cover" }} alt="Premier Health" />
+        <span style={S.sidebarLogoText}>PREMIERCARE</span>
       </div>
       <div style={S.sidebarSection}>
         <div style={S.sidebarSectionLabel}>Navigation</div>
@@ -290,7 +298,7 @@ function useToast() {
 }
 function Toast({ toast }) {
   if (!toast) return null;
-  const colors = { success:"#22d3ee", error:"#f87171", info:"#a78bfa" };
+  const colors = { success:"#C8A96B", error:"#f87171", info:"#1F3D5A" };
   return (
     <div style={{...S.toast, borderLeftColor: colors[toast.type] ?? colors.info}}>
       {toast.msg}
@@ -899,7 +907,7 @@ function Dashboard({ schemas }) {
       <div style={S.dashGrid}>
         {/* Files card */}
         <button key="files" style={S.dashCard} onClick={() => navigate("/admin/files")}>
-          <div style={{...S.dashCardIcon, color:"#22d3ee"}}>{Icon.file}</div>
+          <div style={{...S.dashCardIcon, color:"#C8A96B"}}>{Icon.file}</div>
           <div style={S.dashCardName}>Files</div>
           <div style={S.dashCardSub}>Upload &amp; manage files</div>
           <div style={S.dashCardArrow}>{Icon.chevronRight}</div>
@@ -957,12 +965,12 @@ function AdminShell() {
 function App() {
   const { isAuthenticated, loading } = useAuth();
   const path = useRoute();
-  if (loading) return <div style={{...S.centerFlex,height:"100vh",background:"#0a0c0f"}}>{Icon.spinner}</div>;
+  if (loading) return <div style={{...S.centerFlex,height:"100vh",background:"#FAF9F6"}}>{Icon.spinner}</div>;
   if (!isAuthenticated) {
-    if (path !== "/login") { navigate("/login"); return null; }
+    if (path !== "/admin/login" && path !== "/login") { navigate("/login"); return null; }
     return <LoginPage />;
   }
-  if (path === "/login") { navigate("/admin"); return null; }
+  if (path === "/admin/login" || path === "/login") { navigate("/admin"); return null; }
   return <AdminShell />;
 }
 
@@ -972,99 +980,99 @@ export default function Root() {
 
 // ─── Styles ───────────────────────────────────────────────────────────────
 const S = {
-  loginWrap: { minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#0a0c0f",fontFamily:"'IBM Plex Sans',system-ui,sans-serif" },
-  loginCard: { background:"#111318",border:"1px solid #1e2230",borderRadius:12,padding:40,width:380,boxShadow:"0 24px 80px rgba(0,0,0,.6)" },
+  loginWrap: { minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#F7F2EA",fontFamily:"var(--sans)" },
+  loginCard: { background:"#FFFFFF",border:"1px solid rgba(200, 169, 107, 0.25)",borderRadius:24,padding:40,width:380,boxShadow:"0 20px 50px rgba(153, 134, 117, 0.15)",position:"relative",overflow:"hidden" },
   loginLogo: { display:"flex",alignItems:"center",gap:10,marginBottom:8 },
-  logoIcon:  { color:"#22d3ee",display:"flex" },
-  logoText:  { fontFamily:"'JetBrains Mono',monospace",fontSize:20,fontWeight:700,letterSpacing:4,color:"#e2e8f0" },
+  logoIcon:  { color:"#C8A96B",display:"flex" },
+  logoText:  { fontFamily:"var(--heading)",fontSize:24,fontWeight:700,letterSpacing:4,color:"#1F3D5A" },
   loginSub:  { color:"#64748b",fontSize:13,marginBottom:28,marginTop:0 },
 
-  sidebar: { width:220,flexShrink:0,background:"#0d0f14",borderRight:"1px solid #1a1f2e",display:"flex",flexDirection:"column",height:"100vh",position:"sticky",top:0 },
-  sidebarHeader: { padding:"22px 20px 18px",display:"flex",alignItems:"center",gap:10,borderBottom:"1px solid #1a1f2e" },
-  sidebarLogoIcon: { color:"#22d3ee",display:"flex" },
-  sidebarLogoText: { fontFamily:"'JetBrains Mono',monospace",fontSize:15,fontWeight:700,letterSpacing:4,color:"#e2e8f0" },
+  sidebar: { width:240,flexShrink:0,background:"#1F3D5A",borderRight:"1px solid rgba(200, 169, 107, 0.15)",display:"flex",flexDirection:"column",height:"100vh",position:"sticky",top:0 },
+  sidebarHeader: { padding:"22px 20px 18px",display:"flex",alignItems:"center",gap:10,borderBottom:"1px solid rgba(200, 169, 107, 0.15)" },
+  sidebarLogoIcon: { color:"#C8A96B",display:"flex" },
+  sidebarLogoText: { fontFamily:"var(--heading)",fontSize:18,fontWeight:700,letterSpacing:3,color:"#FFFFFF" },
   sidebarSection: { padding:"18px 12px 8px" },
-  sidebarSectionLabel: { fontSize:10,fontWeight:700,letterSpacing:2,color:"#334155",textTransform:"uppercase",paddingLeft:8,marginBottom:6 },
-  navItem: { display:"flex",alignItems:"center",gap:9,width:"100%",padding:"8px 10px",borderRadius:7,border:"none",background:"transparent",color:"#94a3b8",fontSize:13,fontWeight:500,cursor:"pointer",textAlign:"left",transition:"all .15s" },
-  navItemActive: { background:"rgba(34,211,238,.08)",color:"#22d3ee" },
+  sidebarSectionLabel: { fontSize:10,fontWeight:700,letterSpacing:2,color:"#a2b4c7",textTransform:"uppercase",paddingLeft:8,marginBottom:6 },
+  navItem: { display:"flex",alignItems:"center",gap:9,width:"100%",padding:"10px 12px",borderRadius:12,border:"none",background:"transparent",color:"#cbd5e1",fontSize:13,fontWeight:500,cursor:"pointer",textAlign:"left",transition:"all .15s" },
+  navItemActive: { background:"rgba(200,169,107,.15)",color:"#C8A96B",borderLeft:"3px solid #C8A96B",borderRadius:"0 12px 12px 0" },
   navDot: { width:5,height:5,borderRadius:"50%",background:"currentColor",opacity:.4,flexShrink:0 },
-  sidebarFooter: { marginTop:"auto",padding:14,borderTop:"1px solid #1a1f2e",display:"flex",alignItems:"center",gap:10 },
+  sidebarFooter: { marginTop:"auto",padding:14,borderTop:"1px solid rgba(200, 169, 107, 0.15)",display:"flex",alignItems:"center",gap:10 },
   userBadge: { display:"flex",alignItems:"center",gap:10,flex:1,overflow:"hidden" },
-  userAvatar: { width:30,height:30,borderRadius:8,background:"linear-gradient(135deg,#22d3ee,#7c3aed)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,fontSize:13,color:"#fff",flexShrink:0 },
-  userName: { fontSize:13,fontWeight:600,color:"#e2e8f0",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap" },
-  userRole: { fontSize:11,color:"#475569" },
-  logoutBtn: { background:"transparent",border:"none",color:"#475569",cursor:"pointer",padding:6,borderRadius:6,display:"flex",alignItems:"center" },
+  userAvatar: { width:30,height:30,borderRadius:8,background:"linear-gradient(135deg,#1F3D5A,#C8A96B)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,fontSize:13,color:"#fff",flexShrink:0 },
+  userName: { fontSize:13,fontWeight:600,color:"#FFFFFF",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap" },
+  userRole: { fontSize:11,color:"#a2b4c7" },
+  logoutBtn: { background:"transparent",border:"none",color:"#a2b4c7",cursor:"pointer",padding:6,borderRadius:6,display:"flex",alignItems:"center" },
 
-  shell: { display:"flex",minHeight:"100vh",background:"#0a0c0f",fontFamily:"'IBM Plex Sans',system-ui,sans-serif",color:"#cbd5e1" },
+  shell: { display:"flex",minHeight:"100vh",background:"#FAF9F6",fontFamily:"var(--sans)",color:"#1E293B" },
   mainContent: { flex:1,overflow:"auto" },
 
   pageWrap: { padding:"28px 32px",maxWidth:1200,position:"relative" },
   pageHeader: { display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:24,gap:16 },
-  breadcrumb: { fontSize:12,color:"#475569",marginBottom:8,display:"flex",alignItems:"center" },
-  pageTitle: { fontSize:26,fontWeight:700,color:"#f1f5f9",margin:0,letterSpacing:"-0.5px" },
-  pageSubtitle: { fontSize:13,color:"#475569",marginTop:4 },
-  centerFlex: { display:"flex",alignItems:"center",justifyContent:"center",height:"60vh",color:"#475569" },
+  breadcrumb: { fontSize:12,color:"#64748b",marginBottom:8,display:"flex",alignItems:"center" },
+  pageTitle: { fontSize:28,fontWeight:500,fontFamily:"var(--heading)",color:"#1F3D5A",margin:0,letterSpacing:"-0.5px" },
+  pageSubtitle: { fontSize:13,color:"#64748b",marginTop:4 },
+  centerFlex: { display:"flex",alignItems:"center",justifyContent:"center",height:"60vh",color:"#64748b" },
 
-  dashGrid: { display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:14,marginTop:8 },
-  dashCard: { background:"#111318",border:"1px solid #1a1f2e",borderRadius:10,padding:"20px 18px",cursor:"pointer",textAlign:"left",transition:"all .2s",display:"flex",flexDirection:"column",gap:6,position:"relative" },
-  dashCardIcon: { color:"#475569",opacity:.6,marginBottom:4 },
-  dashCardName: { fontWeight:700,fontSize:16,color:"#e2e8f0" },
-  dashCardSub: { fontSize:12,color:"#475569" },
-  dashCardArrow: { position:"absolute",top:18,right:16,color:"#334155" },
+  dashGrid: { display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))",gap:16,marginTop:8 },
+  dashCard: { background:"#FFFFFF",border:"1px solid rgba(200, 169, 107, 0.15)",borderRadius:16,padding:"24px 20px",cursor:"pointer",textAlign:"left",transition:"all .2s",display:"flex",flexDirection:"column",gap:6,position:"relative",overflow:"hidden",boxShadow:"0 4px 20px rgba(153,134,117,0.04)" },
+  dashCardIcon: { color:"#C8A96B",opacity:.8,marginBottom:4 },
+  dashCardName: { fontWeight:700,fontSize:16,color:"#1F3D5A" },
+  dashCardSub: { fontSize:12,color:"#64748b" },
+  dashCardArrow: { position:"absolute",top:22,right:18,color:"#C8A96B",opacity:.7 },
 
   toolbar: { display:"flex",gap:10,marginBottom:16,alignItems:"center" },
   searchWrap: { position:"relative",flex:1,maxWidth:360 },
-  searchIcon: { position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",color:"#475569",pointerEvents:"none" },
-  searchInput: { width:"100%",padding:"9px 12px 9px 38px",background:"#111318",border:"1px solid #1e2230",borderRadius:8,color:"#e2e8f0",fontSize:14,outline:"none",boxSizing:"border-box" },
+  searchIcon: { position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",color:"#64748b",pointerEvents:"none" },
+  searchInput: { width:"100%",padding:"10px 12px 10px 38px",background:"#FFFFFF",border:"1px solid rgba(200, 169, 107, 0.15)",borderRadius:12,color:"#1E293B",fontSize:14,outline:"none",boxSizing:"border-box",boxShadow:"0 2px 10px rgba(0,0,0,0.02)" },
 
-  tableWrap: { background:"#111318",border:"1px solid #1a1f2e",borderRadius:10,overflow:"hidden" },
+  tableWrap: { background:"#FFFFFF",border:"1px solid rgba(200, 169, 107, 0.15)",borderRadius:16,overflow:"hidden",boxShadow:"0 4px 20px rgba(153, 134, 117, 0.05)" },
   table: { width:"100%",borderCollapse:"collapse",fontSize:13 },
-  th: { padding:"11px 16px",textAlign:"left",color:"#475569",fontSize:11,fontWeight:700,letterSpacing:1,textTransform:"uppercase",borderBottom:"1px solid #1a1f2e",background:"#0d0f14" },
+  th: { padding:"14px 18px",textAlign:"left",color:"#64748b",fontSize:11,fontWeight:700,letterSpacing:1,textTransform:"uppercase",borderBottom:"1px solid rgba(200, 169, 107, 0.15)",background:"#F7F2EA" },
   tr: { transition:"background .1s" },
-  td: { padding:"12px 16px",borderBottom:"1px solid #131720",color:"#cbd5e1",verticalAlign:"middle" },
-  emptyCell: { padding:48,textAlign:"center",color:"#334155",fontSize:14 },
-  tableLoadingWrap: { padding:48,display:"flex",alignItems:"center",justifyContent:"center",color:"#475569" },
+  td: { padding:"14px 18px",borderBottom:"1px solid rgba(200, 169, 107, 0.08)",color:"#1E293B",verticalAlign:"middle" },
+  emptyCell: { padding:48,textAlign:"center",color:"#64748b",fontSize:14 },
+  tableLoadingWrap: { padding:48,display:"flex",alignItems:"center",justifyContent:"center",color:"#64748b" },
 
   badge: {
-    green: { background:"rgba(34,197,94,.1)",color:"#4ade80",padding:"2px 8px",borderRadius:4,fontSize:12,display:"inline-flex",alignItems:"center",gap:4,fontWeight:600 },
-    red:   { background:"rgba(248,113,113,.1)",color:"#f87171",padding:"2px 8px",borderRadius:4,fontSize:12,display:"inline-flex",alignItems:"center",gap:4,fontWeight:600 },
-    gray:  { background:"rgba(100,116,139,.12)",color:"#94a3b8",padding:"2px 8px",borderRadius:4,fontSize:12,fontWeight:600 },
+    green: { background:"rgba(34,197,94,.1)",color:"#16a34a",padding:"2px 8px",borderRadius:4,fontSize:12,display:"inline-flex",alignItems:"center",gap:4,fontWeight:600 },
+    red:   { background:"rgba(220,38,38,.1)",color:"#dc2626",padding:"2px 8px",borderRadius:4,fontSize:12,display:"inline-flex",alignItems:"center",gap:4,fontWeight:600 },
+    gray:  { background:"rgba(100,116,139,.12)",color:"#475569",padding:"2px 8px",borderRadius:4,fontSize:12,fontWeight:600 },
   },
 
-  actionBtn: { background:"transparent",border:"1px solid #1e2230",borderRadius:6,padding:"5px 8px",color:"#64748b",cursor:"pointer",marginLeft:4,display:"inline-flex",alignItems:"center",transition:"all .15s" },
-  actionBtnDanger: { color:"#ef4444",borderColor:"rgba(239,68,68,.2)" },
+  actionBtn: { background:"transparent",border:"1px solid rgba(200, 169, 107, 0.15)",borderRadius:8,padding:"6px 10px",color:"#64748b",cursor:"pointer",marginLeft:4,display:"inline-flex",alignItems:"center",transition:"all .15s" },
+  actionBtnDanger: { color:"#dc2626",borderColor:"rgba(220,38,38,.2)" },
 
   pagination: { display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 0",marginTop:8 },
-  paginationInfo: { fontSize:13,color:"#475569" },
+  paginationInfo: { fontSize:13,color:"#64748b" },
 
-  modalOverlay: { position:"fixed",inset:0,background:"rgba(0,0,0,.7)",backdropFilter:"blur(4px)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,padding:20 },
-  modalCard: { background:"#111318",border:"1px solid #1e2230",borderRadius:14,width:"100%",maxWidth:640,maxHeight:"90vh",display:"flex",flexDirection:"column",boxShadow:"0 40px 120px rgba(0,0,0,.8)" },
-  modalHeader: { display:"flex",alignItems:"center",justifyContent:"space-between",padding:"18px 24px",borderBottom:"1px solid #1a1f2e" },
-  modalTitle: { margin:0,fontSize:17,fontWeight:700,color:"#f1f5f9" },
-  modalClose: { background:"transparent",border:"none",color:"#475569",cursor:"pointer",padding:6,borderRadius:6,display:"flex",alignItems:"center" },
-  modalBody: { padding:"20px 24px 24px",overflow:"auto" },
+  modalOverlay: { position:"fixed",inset:0,background:"rgba(31,61,90,.3)",backdropFilter:"blur(8px)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,padding:20 },
+  modalCard: { background:"#FFFFFF",border:"1px solid rgba(200, 169, 107, 0.2)",borderRadius:24,width:"100%",maxWidth:640,maxHeight:"90vh",display:"flex",flexDirection:"column",boxShadow:"0 30px 90px rgba(31,61,90,0.12)",overflow:"hidden" },
+  modalHeader: { display:"flex",alignItems:"center",justifyContent:"space-between",padding:"20px 24px",borderBottom:"1px solid rgba(200, 169, 107, 0.12)",background:"#FAF9F6" },
+  modalTitle: { margin:0,fontSize:17,fontWeight:700,fontFamily:"var(--heading)",color:"#1F3D5A" },
+  modalClose: { background:"transparent",border:"none",color:"#64748b",cursor:"pointer",padding:6,borderRadius:6,display:"flex",alignItems:"center" },
+  modalBody: { padding:"24px",overflow:"auto" },
 
-  formGrid: { display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))",gap:16 },
+  formGrid: { display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))",gap:20 },
   formField: { display:"flex",flexDirection:"column",gap:6 },
-  label: { fontSize:12,fontWeight:600,color:"#94a3b8",letterSpacing:.5 },
-  input: { padding:"9px 12px",background:"#0d0f14",border:"1px solid #1e2230",borderRadius:8,color:"#e2e8f0",fontSize:14,outline:"none",boxSizing:"border-box",width:"100%",fontFamily:"inherit" },
-  inputError: { borderColor:"#f87171" },
-  fieldError: { fontSize:12,color:"#f87171" },
-  helpText: { fontSize:11,color:"#475569" },
-  errorBanner: { background:"rgba(248,113,113,.1)",border:"1px solid rgba(248,113,113,.25)",borderRadius:7,padding:"9px 12px",color:"#fca5a5",fontSize:13 },
+  label: { fontSize:12,fontWeight:600,color:"#475569",letterSpacing:.5 },
+  input: { padding:"10px 12px",background:"#FFFFFF",border:"1px solid rgba(200, 169, 107, 0.18)",borderRadius:10,color:"#1E293B",fontSize:14,outline:"none",boxSizing:"border-box",width:"100%",fontFamily:"inherit" },
+  inputError: { borderColor:"#dc2626" },
+  fieldError: { fontSize:12,color:"#dc2626" },
+  helpText: { fontSize:11,color:"#64748b" },
+  errorBanner: { background:"rgba(220,38,38,.1)",border:"1px solid rgba(220,38,38,.2)",borderRadius:8,padding:"10px 12px",color:"#dc2626",fontSize:13 },
 
-  btn: { display:"inline-flex",alignItems:"center",gap:7,padding:"9px 16px",borderRadius:8,fontSize:13,fontWeight:600,cursor:"pointer",border:"1px solid transparent",transition:"all .15s",fontFamily:"inherit" },
-  btnPrimary: { background:"linear-gradient(135deg,#0ea5e9,#22d3ee)",color:"#0f172a",border:"none" },
-  btnGhost: { background:"transparent",border:"1px solid #1e2230",color:"#94a3b8" },
+  btn: { display:"inline-flex",alignItems:"center",gap:7,padding:"10px 20px",borderRadius:10,fontSize:13,fontWeight:600,cursor:"pointer",border:"1px solid transparent",transition:"all .15s",fontFamily:"inherit" },
+  btnPrimary: { background:"linear-gradient(135deg, #1F3D5A 0%, #152a3f 100%)",color:"#FFFFFF",border:"none",boxShadow:"0 4px 12px rgba(31,61,90,0.15)" },
+  btnGhost: { background:"transparent",border:"1px solid rgba(200, 169, 107, 0.2)",color:"#1F3D5A" },
 
-  toast: { position:"fixed",bottom:24,right:24,background:"#111318",border:"1px solid #1e2230",borderLeft:"3px solid #22d3ee",borderRadius:8,padding:"12px 18px",color:"#e2e8f0",fontSize:14,zIndex:2000,boxShadow:"0 8px 32px rgba(0,0,0,.5)",maxWidth:340 },
+  toast: { position:"fixed",bottom:24,right:24,background:"#FFFFFF",border:"1px solid rgba(200, 169, 107, 0.2)",borderLeft:"4px solid #C8A96B",borderRadius:12,padding:"14px 20px",color:"#1E293B",fontSize:14,zIndex:2000,boxShadow:"0 8px 32px rgba(153,134,117,.15)",maxWidth:340 },
 
   // Drop zone
-  dropZone: { border:"2px dashed #1e2230",borderRadius:12,padding:"32px 24px",textAlign:"center",cursor:"pointer",transition:"all .2s",background:"#0d0f14",marginBottom:4 },
-  dropZoneActive: { borderColor:"#22d3ee",background:"rgba(34,211,238,.04)" },
-  dropZoneIcon: { color:"#334155",display:"flex",justifyContent:"center",marginBottom:10,transform:"scale(1.5)" },
+  dropZone: { border:"2px dashed rgba(200, 169, 107, 0.25)",borderRadius:16,padding:"32px 24px",textAlign:"center",cursor:"pointer",transition:"all .2s",background:"#FAF9F6",marginBottom:4 },
+  dropZoneActive: { borderColor:"#C8A96B",background:"rgba(200,169,107,.04)" },
+  dropZoneIcon: { color:"#C8A96B",display:"flex",justifyContent:"center",marginBottom:10,transform:"scale(1.3)" },
   dropZoneText: { color:"#64748b",fontSize:14,fontWeight:500,marginBottom:4 },
-  dropZoneSub: { color:"#334155",fontSize:12 },
+  dropZoneSub: { color:"#64748b",fontSize:12 },
 };
 
 // ─── Global CSS ───────────────────────────────────────────────────────────
@@ -1072,17 +1080,21 @@ if (!document.getElementById("nexus-global-styles")) {
   const style = document.createElement("style");
   style.id = "nexus-global-styles";
   style.textContent = `
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Arapey:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+    :root {
+      --sans: 'IBM Plex Sans', system-ui, sans-serif;
+      --heading: 'Arapey', serif;
+    }
     * { box-sizing: border-box; }
-    body { margin: 0; background: #0a0c0f; }
+    body { margin: 0; background: #FAF9F6; font-family: var(--sans); color: #1E293B; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    button:hover { opacity: .85; }
-    input:focus, select:focus, textarea:focus { border-color: #22d3ee !important; box-shadow: 0 0 0 3px rgba(34,211,238,.08); }
-    tr:hover td { background: rgba(255,255,255,.02); }
+    button:hover { opacity: .9; transform: translateY(-0.5px); transition: all .15s; }
+    input:focus, select:focus, textarea:focus { border-color: #1F3D5A !important; box-shadow: 0 0 0 3px rgba(31,61,90,.08); }
+    tr:hover td { background: rgba(200,169,107,.02); }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #0d0f14; }
-    ::-webkit-scrollbar-thumb { background: #1e2230; border-radius: 3px; }
-    select option { background: #111318; }
+    ::-webkit-scrollbar-track { background: #FAF9F6; }
+    ::-webkit-scrollbar-thumb { background: rgba(200,169,107,.2); border-radius: 3px; }
+    select option { background: #FFFFFF; color: #1E293B; }
   `;
   document.head.appendChild(style);
 }
